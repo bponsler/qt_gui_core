@@ -231,7 +231,7 @@ class DotToQtGenerator():
         # layout graph
         if dotcode is None:
             return {}, {}
-        graph = pydot.graph_from_dot_data(dotcode.encode("ascii", "ignore"))
+        graph = pydot.graph_from_dot_data(dotcode) # .encode("ascii", "ignore"))
         if isinstance(graph, list):
             graph = graph[0]
 

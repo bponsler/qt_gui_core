@@ -51,18 +51,17 @@ if(shiboken_helper_FOUND)
     set(QT_INCLUDE_DIR "${Qt5Widgets_INCLUDE_DIRS}")
     shiboken_generator(libqt_gui_cpp global.h typesystem.xml ${PROJECT_SOURCE_DIR}/src/qt_gui_cpp_shiboken "${qt_gui_cpp_shiboken_SRCS}" "${qt_gui_cpp_HDRS}" "${qt_gui_cpp_INCLUDE_PATH}" "${CMAKE_CURRENT_BINARY_DIR}")
 
-    include_directories(qt_gui_cpp_shiboken ${qt_gui_cpp_INCLUDE_PATH}/qt_gui_cpp)
+    include_directories(qt_gui_cpp_shiboken ${qt_gui_cpp_INCLUDE_PATH}/qt_gui_cpp ${INCLUDE_DIRS})
     shiboken_include_directories(qt_gui_cpp_shiboken "${qt_gui_cpp_shiboken_QT_COMPONENTS}")
     add_library(qt_gui_cpp_shiboken ${qt_gui_cpp_shiboken_SRCS})
     set_target_properties(qt_gui_cpp_shiboken PROPERTIES
-      ARCHIVE_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
-      LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
-    )
-    target_link_libraries(qt_gui_cpp_shiboken ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}
+      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR})
+    target_link_libraries(qt_gui_cpp_shiboken ${PROJECT_NAME} ${LIBS} ${Boost_LIBRARIES})
     shiboken_target_link_libraries(qt_gui_cpp_shiboken "${qt_gui_cpp_shiboken_QT_COMPONENTS}")
 
     install(TARGETS qt_gui_cpp_shiboken
-      ARCHIVE DESTINATION ${CATKIN_PACKAGE_PYTHON_DESTINATION}
-      LIBRARY DESTINATION ${CATKIN_PACKAGE_PYTHON_DESTINATION})
+      ARCHIVE DESTINATION lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages
+      LIBRARY DESTINATION lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
   endif()
 endif()

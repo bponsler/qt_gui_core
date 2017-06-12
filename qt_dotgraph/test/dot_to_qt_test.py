@@ -41,8 +41,8 @@ import subprocess
 
 def check_x_server():
     p = subprocess.Popen(sys.executable, stdin=subprocess.PIPE)
-    p.stdin.write('from python_qt_binding.QtWidgets import QApplication\n')
-    p.stdin.write('app = QApplication([])\n')
+    p.stdin.write(b'from python_qt_binding.QtWidgets import QApplication\n')
+    p.stdin.write(b'app = QApplication([])\n')
     p.stdin.close()
     p.communicate()
 
@@ -58,7 +58,7 @@ class DotToQtGeneratorTest(unittest.TestCase):
         graph [bb="0,0,154,108",
             rank=same
         ];
-        node [label="\N"];
+        node [label="a_node"];
         subgraph cluster_foo {
             graph [bb="1,1,100,101",
                 label=cluster_foo

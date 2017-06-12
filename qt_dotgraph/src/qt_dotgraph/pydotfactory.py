@@ -165,6 +165,7 @@ class PydotFactory():
         graph.add_edge(edge)
 
     def create_dot(self, graph):
-        dot = graph.create_dot()
+        dot = graph.create_dot()  # Returns a bytes object
+        dot = dot.decode('utf-8')  # Convert bytes to a string
         # sadly pydot generates line wraps cutting between numbers
         return dot.replace("\\\n", "")

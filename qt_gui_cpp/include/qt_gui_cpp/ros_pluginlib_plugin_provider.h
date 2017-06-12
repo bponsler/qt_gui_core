@@ -207,7 +207,7 @@ public:
       return 0;
     }
 
-    boost::shared_ptr<T> instance;
+    std::shared_ptr<T> instance;
     try
     {
       instance = create_plugin(lookup_name, plugin_context);
@@ -259,7 +259,7 @@ public:
       return;
     }
 
-    boost::shared_ptr<T> pointer = instances_.take(instance);
+    std::shared_ptr<T> pointer = instances_.take(instance);
     libraries_to_unload_.append(pointer);
 
     QCoreApplication::postEvent(this, new QEvent(static_cast<QEvent::Type>(unload_libraries_event_)));
@@ -277,7 +277,7 @@ public:
 
 protected:
 
-  virtual boost::shared_ptr<T> create_plugin(const std::string& lookup_name, PluginContext* /*plugin_context*/ = 0)
+  virtual std::shared_ptr<T> create_plugin(const std::string& lookup_name, PluginContext* /*plugin_context*/ = 0)
   {
     return class_loader_->createInstance(lookup_name);
   }
@@ -394,9 +394,9 @@ private:
 
   pluginlib::ClassLoader<T>* class_loader_;
 
-  QMap<void*, boost::shared_ptr<T> > instances_;
+  QMap<void*, std::shared_ptr<T> > instances_;
 
-  QList<boost::shared_ptr<T> > libraries_to_unload_;
+  QList<std::shared_ptr<T> > libraries_to_unload_;
 
 };
 

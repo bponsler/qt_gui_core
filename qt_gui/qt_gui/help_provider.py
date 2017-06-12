@@ -27,11 +27,12 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+import os
+import subprocess
 import webbrowser
+import xml.dom.minidom as dom
 
 from python_qt_binding.QtCore import QObject, Slot
-from rospkg import InvalidManifest, MANIFEST_FILE, parse_manifest_file
 
 from .ros_package_helper import get_package_path
 
@@ -46,9 +47,35 @@ class HelpProvider(QObject):
     @Slot(object)
     def plugin_help_request(self, plugin_descriptor):
         package_name = plugin_descriptor.attributes()['package_name']
-        package_path = get_package_path(package_name)
+        package_path = subprocess.getoutput("rospack find %s" % package_name)
         try:
-            manifest = parse_manifest_file(package_path, MANIFEST_FILE)
+            url = self.__get_manifest_url(package_path, MANIFEST_FILE)
         except (InvalidManifest, IOError):
             return
-        webbrowser.open(manifest.url)
+        webbrowser.open(url)
+
+    def __get_manifest_url(self, dirpath, manifest_name):
+        type_ = 'package'
+
+        filename = os.path.join(dirpath, manifest_name)
+        if os.path.isfile(filename):
+            with open(filename, 'r') as f:
+                content = f.read()
+
+                # Locate the package element
+                try:
+                    d = dom.parseString(content)
+                except Exception as e:
+                    raise Exception("[%s] invalid XML: %s" % (filename, e))
+                nodes = [t for t in d.childNodes if t.nodeType == t.ELEMENT_NODE and t.tagName == type_]
+                if len(nodes) != 1:
+                    raise Exception("manifest [%s] must have a single '%s' element" % (filename, type_))
+
+                # Find the url nodes
+                url = [t for t in nodes[0].childNodes if t.nodeType == t.ELEMENT_NODE and t.tagName == "url"]
+                if len(url) > 0:
+                    # Select the first url
+                    text = "".join([n.data for n in url[0].childNodes if n.nodeType == n.TEXT_NODE])
+                    return text.strip()
+
+        raise Exception("Unable to locate manifest url: %s" % filename)
