@@ -135,7 +135,11 @@ class DotToQtGenerator():
         if name is None:
             print("Error, no label defined for node with attr: %s" % node.attr)
             return None
-        name = name.decode('string_escape')
+        if type(name) != type(str()):
+            try:
+                name = name.decode('string_escape')
+            except:
+                name = name.decode('utf-8')
 
         # decrease rect by one so that edges do not reach inside
         bb_width = node.attr.get('width', len(name) / 5)

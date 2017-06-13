@@ -36,6 +36,8 @@ from python_qt_binding.QtCore import QObject, Slot
 
 from .ros_package_helper import get_package_path
 
+import rospkg
+
 
 class HelpProvider(QObject):
 
@@ -46,8 +48,9 @@ class HelpProvider(QObject):
 
     @Slot(object)
     def plugin_help_request(self, plugin_descriptor):
+        rp = rospkg.RosPack()
         package_name = plugin_descriptor.attributes()['package_name']
-        package_path = subprocess.getoutput("rospack find %s" % package_name)
+        package_path = rp.get_path(package_name)
         try:
             url = self.__get_manifest_url(package_path, MANIFEST_FILE)
         except (InvalidManifest, IOError):
