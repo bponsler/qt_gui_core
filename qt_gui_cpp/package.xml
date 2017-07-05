@@ -29,6 +29,5 @@
   <export>
     <qt_gui plugin="${prefix}/plugin.xml" />
     <build_type>ament_cmake</build_type>
-    <build_type>ament_python</build_type>
   </export>
 </package>
